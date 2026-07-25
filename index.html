@@ -12,7 +12,7 @@
             --dark-maroon: #2c050a;
             --gold: #d4af37;
             --light-gold: #f9f1d8;
-            --cream: #fffdf5;
+            --cream: rgba(255, 253, 245, 0.94);
             --text-dark: #2a2a2a;
         }
 
@@ -24,25 +24,45 @@
         }
 
         body {
-            background-color: var(--cream);
+            background-color: #1a0306;
             color: var(--text-dark);
             line-height: 1.6;
+            position: relative;
+        }
+
+        /* Background Video Overlay Styling */
+        .video-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-bg-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.35) sepia(0.5) contrast(1.1); /* Old temple vintage effect */
         }
 
         /* Header & Navigation */
         header {
-            background: linear-gradient(135deg, var(--dark-maroon), var(--maroon));
+            background: linear-gradient(135deg, rgba(44, 5, 10, 0.95), rgba(74, 14, 23, 0.95));
             color: var(--gold);
             text-align: center;
             padding: 2.5rem 1rem 1.5rem;
             border-bottom: 4px solid var(--gold);
             position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
         .header-title {
             font-size: 2.8rem;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             margin-bottom: 0.2rem;
         }
 
@@ -55,7 +75,7 @@
         .location-tag {
             display: inline-block;
             margin-top: 10px;
-            background: rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.25);
             padding: 5px 15px;
             border-radius: 20px;
             border: 1px solid var(--gold);
@@ -72,12 +92,13 @@
 
         /* Section Styling */
         .section-box {
-            background: #fff;
+            background: var(--cream);
             border: 2px solid var(--gold);
             border-radius: 8px;
             padding: 25px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            backdrop-filter: blur(3px);
         }
 
         .section-title {
@@ -141,7 +162,7 @@
 
         .category-content {
             padding: 20px;
-            display: none; /* Collapsed by default, expanded via JS or click */
+            display: none;
             background: #faf8f2;
         }
 
@@ -166,7 +187,6 @@
             overflow: hidden;
         }
 
-        /* Product Images Styling */
         .product-img {
             width: 100%;
             height: 220px;
@@ -211,11 +231,6 @@
             font-size: 1rem;
         }
 
-        .form-group input[type="file"] {
-            background: #f8f8f8;
-            padding: 8px;
-        }
-
         /* Buttons */
         .btn {
             display: inline-block;
@@ -249,6 +264,52 @@
             background-color: var(--dark-maroon);
         }
 
+        /* Order Modal (Pop-up) Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #fff;
+            border: 3px solid var(--gold);
+            border-radius: 8px;
+            max-width: 500px;
+            width: 100%;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--maroon);
+            cursor: pointer;
+        }
+
+        .modal-title {
+            color: var(--maroon);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 5px;
+        }
+
         /* Footer */
         footer {
             background: var(--dark-maroon);
@@ -266,6 +327,13 @@
     </style>
 </head>
 <body>
+
+    <!-- Temple Vintage Video Background -->
+    <div class="video-bg-container">
+        <video autoplay loop muted playsinline poster="1001100739.jpg">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-burning-oil-lamps-in-a-temple-41551-large.mp4" type="video/mp4">
+        </video>
+    </div>
 
     <!-- Header Section -->
     <header>
@@ -308,7 +376,7 @@
                                 <div class="item-name">వెండి పాదాలు (Vendi Padalu)</div>
                                 <div class="item-desc">అమ్మవారు మరియు స్వామివార్ల పూజా వెండి పాదాలు మరియు కవచాలు.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('వెండి పాదాలు (Vendi Padalu)')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('వెండి పాదాలు (Vendi Padalu)')">ఆర్డర్ చేయండి</button>
                         </div>
                         <div class="item-box">
                             <div>
@@ -316,21 +384,37 @@
                                 <div class="item-name">వెండి దుస్తులు & కవచాలు (Vendi Dusulu/Kavacham)</div>
                                 <div class="item-desc">పూర్తి విగ్రహానికి అమర్చే శుద్ధ వెండి దుస్తులు మరియు కవచాలు.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('వెండి దుస్తులు / కవచం')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('వెండి దుస్తులు / కవచం')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
+                                <img src="1000631899.jpg" alt="వెండి ప్రభావళి" class="product-img">
+                                <div class="item-name">వెండి మకరతోరణం & ప్రభావళి</div>
+                                <div class="item-desc">దేవాలయ విగ్రహాల అలంకరణ కోసం ప్రత్యేకంగా చెక్కిన వెండి ప్రభావళి.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('వెండి మకరతోరణం & ప్రభావళి')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
+                                <img src="1001094898.jpg" alt="వెండి నాగేంద్రుడు" class="product-img">
+                                <div class="item-name">వెండి నాగేంద్రుడు & లింగ పీఠం</div>
+                                <div class="item-desc">శివలింగ అలంకరణ మరియు నాగదేవత పూజ కొరకు వెండి తోడుగులు.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('వెండి నాగేంద్రుడు & లింగ పీఠం')">ఆర్డర్ చేయండి</button>
                         </div>
                         <div class="item-box">
                             <div>
                                 <div class="item-name">స్వామివారి వెండి ఆభరణాలు (Vendi Abharanalu)</div>
                                 <div class="item-desc">కిరీటాలు, కర్ణపత్రాలు, హారాలు, మరియు కంఠాభరణాలు.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('స్వామివారి వెండి ఆభరణాలు')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('స్వామివారి వెండి ఆభరణాలు')">ఆర్డర్ చేయండి</button>
                         </div>
                         <div class="item-box">
                             <div>
                                 <div class="item-name">వెండి నేత్రాలు & నామాలు</div>
                                 <div class="item-desc">విగ్రహాల శోభ కొరకు ప్రత్యేకంగా చెక్కిన వెండి కళ్ళు మరియు శంఖు చక్ర నామాలు.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('వెండి నేత్రాలు & నామాలు')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('వెండి నేత్రాలు & నామాలు')">ఆర్డర్ చేయండి</button>
                         </div>
                     </div>
                 </div>
@@ -346,33 +430,50 @@
                     <div class="items-grid">
                         <div class="item-box">
                             <div>
-                                <img src="1001118232.jpg" alt="లక్ష్మీ నరసింహ స్వామి" class="product-img">
-                                <div class="item-name">శ్రీ లక్ష్మీ నరసింహ స్వామి</div>
-                                <div class="item-desc">దేవాలయ ప్రతిష్ఠ మరియు ఉత్సవాల కొరకు పవిత్ర పంచలోహ విగ్రహం.</div>
+                                <img src="1000771759.jpg" alt="శ్రీ వెంకటేశ్వర స్వామి" class="product-img">
+                                <div class="item-name">శ్రీ వెంకటేశ్వర స్వామి పంచలోహ విగ్రహం</div>
+                                <div class="item-desc">కవచాలంకృత శ్రీ వెంకటేశ్వర స్వామి దివ్య పంచలోహ మూర్తి.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('లక్ష్మీ నరసింహ స్వామి విగ్రహం')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('శ్రీ వెంకటేశ్వర స్వామి పంచలోహ విగ్రహం')">ఆర్డర్ చేయండి</button>
                         </div>
                         <div class="item-box">
                             <div>
-                                <img src="1001118236.jpg" alt="శ్రీ కృష్ణుడు / రాములవారి సెట్" class="product-img">
-                                <div class="item-name">ప్రాచీన దేవతా విగ్రహాలు / కృష్ణుడు</div>
-                                <div class="item-desc">శ్రీ కృష్ణుడు, సీతా రామ లక్ష్మణ సమేత పంచలోహ విగ్రహాలు.</div>
+                                <img src="1001118242.jpg" alt="లక్ష్మీ నరసింహ స్వామి" class="product-img">
+                                <div class="item-name">శ్రీ లక్ష్మీ నరసింహ స్వామి (పీఠం)</div>
+                                <div class="item-desc">దేవాలయ ప్రతిష్ఠ కొరకు లక్ష్మీ నరసింహ స్వామి పంచలోహ విగ్రహం.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('పంచలోహ దేవతా విగ్రహాలు')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('లక్ష్మీ నరసింహ స్వామి విగ్రహం')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
+                                <img src="1001118236_2.jpg" alt="వేణుగోపాల కృష్ణుడు" class="product-img">
+                                <div class="item-name">శ్రీ వేణుగోపాల కృష్ణుడు</div>
+                                <div class="item-desc">అత్యంత సుందరమైన పంచలోహ శ్రీ కృష్ణుని విగ్రహం.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('శ్రీ వేణుగోపాల కృష్ణుడు')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
+                                <img src="1001118241.jpg" alt="నటరాజ స్వామి" class="product-img">
+                                <div class="item-name">నటరాజ స్వామి / శివ తాండవ మూరి</div>
+                                <div class="item-desc">సాంప్రదాయ రీతిలో తయారైన పంచలోహ నటరాజ విగ్రహం.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('నటరాజ స్వామి విగ్రహం')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
+                                <img src="1001118236.jpg" alt="రాములవారి సెట్" class="product-img">
+                                <div class="item-name">రాములవారి సెట్ & సీతా సమేత మూరి</div>
+                                <div class="item-desc">సీతా రామ లక్ష్మణ సమేత పంచలోహ కళారూపాలు.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('రాములవారి సెట్')">ఆర్డర్ చేయండి</button>
                         </div>
                         <div class="item-box">
                             <div>
                                 <div class="item-name">సిద్ధి వినాయకుడు (Ganapathi)</div>
                                 <div class="item-desc">పూజా పీఠం మరియు ఆలయ ప్రతిష్ఠ కోసం వివిధ భంగిమల గణపతి.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('పంచలోహ గణపతి విగ్రహం')">ఆర్డర్ చేయండి</button>
-                        </div>
-                        <div class="item-box">
-                            <div>
-                                <div class="item-name">ప్రాచీన & సాంప్రదాయ దేవుళ్ల విగ్రహాలు</div>
-                                <div class="item-desc">వెంకటేశ్వర స్వామి, శివ పార్వతులు, శ్రీ కృష్ణుడు, దుర్గాదేవి, హనుమంతుడు.</div>
-                            </div>
-                            <button class="btn" onclick="orderWhatsApp('ప్రాచీన దేవుళ్ల పంచలోహ విగ్రహాలు')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('పంచలోహ గణపతి విగ్రహం')">ఆర్డర్ చేయండి</button>
                         </div>
                     </div>
                 </div>
@@ -388,11 +489,35 @@
                     <div class="items-grid">
                         <div class="item-box">
                             <div>
+                                <img src="1000833720.jpg" alt="గరుడ ఆళ్వార్" class="product-img">
+                                <div class="item-name">గరుడ ఆళ్వార్ / గరుడ స్వామి</div>
+                                <div class="item-desc">బంగారు పూత మెరుపుతో తయారైన దివ్య గరుడ విగ్రహ శిల్పం.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('గరుడ ఆళ్వార్ శిల్పం')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
+                                <img src="1000768969.jpg" alt="నంది వాహనం" class="product-img">
+                                <div class="item-name">నంది వాహనం / క్షేత్ర నంది</div>
+                                <div class="item-desc">శివాలయం కోసం ప్రత్యేకంగా చెక్కిన నంది దేవుని అలంకార రూపం.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('నంది వాహనం / క్షేత్ర నంది')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
                                 <img src="1001125119.jpg" alt="గరుడ వాహనం" class="product-img">
                                 <div class="item-name">గరుడ వాహనం (Garuda Vahanam)</div>
                                 <div class="item-desc">అత్యంత శోభాయమానంగా తయారు చేసిన దేవుని గరుడ వాహనం.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('గరుడ వాహనం')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('గరుడ వాహనం')">ఆర్డర్ చేయండి</button>
+                        </div>
+                        <div class="item-box">
+                            <div>
+                                <img src="1001118214.jpg" alt="బంగారు పూత మకరతోరణం" class="product-img">
+                                <div class="item-name">బంగారు పూత మకరతోరణం</div>
+                                <div class="item-desc">దేవాలయ ప్రధాన విగ్రహాల వెనుక అమర్చే సువర్ణ మకరతోరణం.</div>
+                            </div>
+                            <button class="btn" onclick="openOrderModal('బంగారు పూత మకరతోరణం')">ఆర్డర్ చేయండి</button>
                         </div>
                         <div class="item-box">
                             <div>
@@ -400,14 +525,14 @@
                                 <div class="item-name">మకరతోరణాలు & ప్రభావళి</div>
                                 <div class="item-desc">విగ్రహాల వెనుక అమర్చే సుందరమైన బంగారు పూత / పంచలోహ మకరతోరణాలు.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('మకరతోరణాలు / ప్రభావళి')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('మకరతోరణాలు / ప్రభావళి')">ఆర్డర్ చేయండి</button>
                         </div>
                         <div class="item-box">
                             <div>
                                 <div class="item-name">ధ్వజస్తంభం & కలశాలు</div>
                                 <div class="item-desc">రాగి/ఇత్తడి ధ్వజస్తంభ కవరింగ్స్ మరియు గుడి గోపురం కలశాలు.</div>
                             </div>
-                            <button class="btn" onclick="orderWhatsApp('ధ్వజస్తంభం & కలశాలు')">ఆర్డర్ చేయండి</button>
+                            <button class="btn" onclick="openOrderModal('ధ్వజస్తంభం & కలశాలు')">ఆర్డర్ చేయండి</button>
                         </div>
                     </div>
                 </div>
@@ -415,51 +540,57 @@
 
         </section>
 
-        <!-- Custom Ornaments & Direct Message to Owner Section -->
+        <!-- Custom Ornaments & Direct Message Section -->
         <section class="section-box">
-            <h2 class="section-title">కస్టమైజ్డ్ ఆభరణాలు / ఓనర్‌కు నేరుగా సందేశం</h2>
+            <h2 class="section-title">ప్రత్యేక కస్టమైజ్డ్ ఆభరణాలు / ఓనర్‌కు సందేశం</h2>
             <p style="text-align: center; margin-bottom: 20px; color: #555;">
-                మీరు కోరుకున్న డిజైన్, ఆభరణాలు లేదా కొలతలతో ప్రత్యేకంగా చేయించుకోవాలనుకుంటే ఈ క్రింది ఫారమ్ నింపి పంపండి.
+                మీరు కోరుకున్న డిజైన్ లేదా కొలతలతో ఆభరణం చేయించుకోవడానికి నేరుగా ఇక్కడ వివరాలు పూరించండి.
             </p>
+            <button class="btn btn-secondary" onclick="openOrderModal('ప్రత్యేక కస్టమైజ్డ్ ఆభరణం (Custom Order)')">కస్టమ్ ఆభరణం ఆర్డర్ వివరాలు పంపండి</button>
+        </section>
+
+    </div>
+
+    <!-- Customer Details & Order Modal -->
+    <div id="orderModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeOrderModal()">&times;</span>
+            <div id="modalItemTitle" class="modal-title">ఆర్డర్ వివరాలు</div>
             
-            <form onsubmit="sendCustomMessage(event)">
+            <form onsubmit="submitOrderToWhatsApp(event)">
+                <input type="hidden" id="selectedProduct" value="">
+
                 <div class="form-group">
-                    <label for="custName">మీ పేరు (Name):</label>
-                    <input type="text" id="custName" placeholder="మీ పేరు నమోదు చేయండి" required>
+                    <label for="custName">మీ పేరు (Full Name):</label>
+                    <input type="text" id="custName" placeholder="మీ పూర్తి పేరు నమోదు చేయండి" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="custPhone">మీ ఫోన్ నంబర్ (Phone Number):</label>
+                    <label for="custPhone">ఫోన్ నంబర్ (Phone Number):</label>
                     <input type="tel" id="custPhone" placeholder="మీ ఫోన్ నంబర్" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="materialChoice">కావలసిన లోహం (Material Type):</label>
-                    <select id="materialChoice" required>
-                        <option value="పంచలోహం (Panchaloha)">పంచలోహం (Panchaloha)</option>
-                        <option value="వెండి (Silver)">వెండి (Silver)</option>
-                        <option value="ఇత్తడి / రాగి (Brass/Copper)">ఇత్తడి / రాగి (Brass/Copper)</option>
-                        <option value="ప్రత్యేక కస్టమ్ ఆభరణం (Custom Ornament)">ప్రత్యేక కస్టమ్ ఆభరణం (Custom Ornament)</option>
-                    </select>
+                    <label for="custAddress">చిరునామా (Delivery Address):</label>
+                    <textarea id="custAddress" rows="2" placeholder="మీ పట్టణం/గ్రామం మరియు అడ్రస్" required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="customMessage">మీ అభిప్రాయం / డిజైన్ / సైజు వివరాలు (Custom Requirement/Message):</label>
-                    <textarea id="customMessage" rows="4" placeholder="ఉదాహరణకు: నాకు వెండి ఆభరణాలు / నిర్దిష్ట విగ్రహం కొలతలతో కావాలి..." required></textarea>
+                    <label for="custNotes">వివరాలు / సైజు (Size / Customizations):</label>
+                    <textarea id="custNotes" rows="3" placeholder="అంగుళాలు, బరువు లేదా ఇతర కస్టమైజ్డ్ వివరాలు..."></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="photo">ఫోటో ఎంచుకోండి (Select Reference Photo if any):</label>
-                    <input type="file" id="photo" accept="image/*">
-                    <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 5px;">
-                        * వాట్సాప్ ఓపెన్ అయిన తర్వాత ఫోటోను సెలెక్ట్ చేసి ఓనర్‌కు షేర్ చేయవచ్చు.
+                    <label for="custPhoto">డిజైన్/ఫోటో అప్‌లోడ్ (Reference Photo):</label>
+                    <input type="file" id="custPhoto" accept="image/*">
+                    <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 4px;">
+                        * వాట్సాప్ ఓపెన్ అయిన తర్వాత ఫోటోను అటాచ్ చేయవచ్చు.
                     </small>
                 </div>
 
-                <button type="submit" class="btn btn-secondary">మహేష్ ఆచార్య గారికి సందేశం పంపండి (WhatsApp)</button>
+                <button type="submit" class="btn">వాట్సాప్‌లో ఆర్డర్ పంపండి</button>
             </form>
-        </section>
-
+        </div>
     </div>
 
     <!-- Footer -->
@@ -470,11 +601,10 @@
         <p style="margin-top: 10px; font-size: 1.2rem; color: var(--gold);">📞 <strong>9059371400</strong></p>
     </footer>
 
-    <!-- JavaScript Functions for WhatsApp & Collapsible Sections -->
+    <!-- JavaScript Integration -->
     <script>
         const ownerPhone = "9059371400";
 
-        // Toggle Category Accordion
         function toggleCategory(id) {
             const element = document.getElementById(id);
             if (element.style.display === "block" || element.classList.contains("active")) {
@@ -486,31 +616,43 @@
             }
         }
 
-        // Direct Item Order Function
-        function orderWhatsApp(itemName) {
-            let message = `నమస్కారం మహేష్ ఆచార్య గారు, శ్రీ గణేష్ ఆర్ట్ నికేతన్ వెబ్‌సైట్ ద్వారా నేను *${itemName}* గురించి వివరాలు మరియు ఆర్డర్ తెలుసుకోవాలనుకుంటున్నాను.`;
-            let url = `https://wa.me/91${ownerPhone}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+        function openOrderModal(itemName) {
+            document.getElementById('selectedProduct').value = itemName;
+            document.getElementById('modalItemTitle').innerText = "ఆర్డర్: " + itemName;
+            document.getElementById('orderModal').style.display = "flex";
         }
 
-        // Send Custom Message to Owner
-        function sendCustomMessage(event) {
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = "none";
+        }
+
+        function submitOrderToWhatsApp(event) {
             event.preventDefault();
-            
+
+            let product = document.getElementById('selectedProduct').value;
             let name = document.getElementById('custName').value;
             let phone = document.getElementById('custPhone').value;
-            let material = document.getElementById('materialChoice').value;
-            let details = document.getElementById('customMessage').value;
-            let photoInput = document.getElementById('photo');
+            let address = document.getElementById('custAddress').value;
+            let notes = document.getElementById('custNotes').value;
+            let photoInput = document.getElementById('custPhoto');
 
-            let message = `నమస్కారం మహేష్ ఆచార్య గారు,\n\nనేను ఒక కస్టమైజ్డ్ ఆభరణం/ఆర్డర్ గురించి సందేశం పంపుతున్నాను:\n\n- *పేరు:* ${name}\n- *ఫోన్ నంబర్:* ${phone}\n- *లోహం:* ${material}\n- *వివరాలు:* ${details}`;
+            let message = `నమస్కారం మహేష్ ఆచార్య గారు,\n\nశ్రీ గణేష్ ఆర్ట్ నికేతన్ వెబ్‌సైట్ ద్వారా కొత్త ఆర్డర్ వచ్చింది:\n\n` +
+                          `▪ *ఉత్పత్తి:* ${product}\n` +
+                          `▪ *కస్టమర్ పేరు:* ${name}\n` +
+                          `▪ *ఫోన్ నంబర్:* ${phone}\n` +
+                          `▪ *చిరునామా:* ${address}\n`;
 
-            if(photoInput.files.length > 0) {
-                message += `\n\n*(గమనిక: నేను వాట్సాప్‌లో రెఫరెన్స్ ఫోటో అటాచ్ చేస్తున్నాను)*`;
+            if (notes.trim() !== "") {
+                message += `▪ *అదనపు వివరాలు:* ${notes}\n`;
+            }
+
+            if (photoInput.files.length > 0) {
+                message += `\n*(గమనిక: కస్టమర్ వాట్సాప్‌లో ఫోటో కూడా అటాచ్ చేస్తున్నారు)*`;
             }
 
             let url = `https://wa.me/91${ownerPhone}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
+            closeOrderModal();
         }
     </script>
 </body>
